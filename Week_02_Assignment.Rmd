@@ -12,8 +12,30 @@ knitr::opts_chunk$set(echo = TRUE)
 1.  Install the `nycflights13` package and load it into the namespace of your R session. Also, load the `tidyverse` package into the namespace of your R session. Attach the `airlines`, `airports`, `flights`, `weather`, and `planes` datasets
 
 ```{r}
-
+install.packages(("nycflights13"))
 ```
+
+```{r}
+library(nycflights13)
+```
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+?nycflights13
+```
+
+```{r}
+data("airports")
+data("airlines")
+data("flights")
+data("weather")
+data("planes")
+```
+
+
 
 2.  We'll begin by exploring the `flights` dataset. Determine the following information about the dataset.
 
@@ -22,8 +44,22 @@ knitr::opts_chunk$set(echo = TRUE)
 -   Summary Statistics for each column
 
 ```{r}
+str(flights)
 
 ```
+```{r}
+dim(flights)
+```
+
+```{r}
+ncol(flights)
+```
+
+
+
+
+
+
 
 3.  We'll be concentrating on a few key fields. Use the vignette about the `flights` table to look up the definitions of the following fields:
 
@@ -33,6 +69,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Copy those definitions as a response here.
 
+dep_delay, arr_delay
+Departure and arrival delays, in minutes. Negative times represent early departures/arrivals.
+
+hour, minute
+Time of scheduled departure broken into hour and minutes.
+
+
+origin, dest
+Origin and destination. 
 ```{r}
 
 ```
@@ -41,36 +86,116 @@ Copy those definitions as a response here.
 
 ```{r}
 
+ggplot(data = flights) +
+  geom_bar(aes(x = origin, fill = year))
+  
+
+
 ```
+# I used the flights data to create a bar graph that shows the number of lfights that went to each airport throughout the year.The graph shows that the most flights went to EWR
 
 5.  What is the distribution of flight departure times by hour? Describe the plot that you created.
 
     *Hint: Consider different geometries when creating the graph. Histograms are usually a good place to start when considering distributions, but bar plots can be helpful as well.*
 
 ```{r}
+Departure_time_histogram<- (flights$dep_time)
 
 ```
+
+```{r}
+ggplot(data = flights) +
+  geom_bar(aes(x = hour, fill = Departure_time_histogram))
+```
+#I created a histogram of the departure times. I created a bar graph to count how many departure times were in each hour.
+
+
+
+```{r}
+?flights
+
+```
+
 
 6.  How does the distribution change when we consider the origin of the flight? Build upon your response in question 5. Describe the differences.
 
     *Hint: Experiment with faceting to find a view that is most helpful.*
 
 ```{r}
+ggplot(data = flights, 
+       aes(x = hour, 
+           y = Departure_time_histogram)) +
+geom_point(aes(color = origin)) + geom_smooth(aes(group = origin),
+                                               color = "blue") + facet_wrap(~origin, ncol = 3)
+
 
 ```
+The departure time is now spread out among the 3 airlines.
+
+
 
 7.  How does departure hour interact with departure delay? Utilize a [boxplot](https://towardsdatascience.com/understanding-boxplots-5e2df7bcbd51). Interpret the graph.
 
     *Hint: It can be helpful to adjust the portion of the graph that you observe in order to find patterns. Consider using `coord_cartesian` to help with this.*
 
 ```{r}
+?flights
+```
+
+
+```{r}
+boxplot(dep_time~hour,data=flights) 
 
 ```
 
+
+```{r}
+boxplot(dep_time~hour,data=flights)
+  coord_cartesian(
+  xlim = 50,
+  ylim = 50,
+  expand = FALSE,
+  default = FALSE)
+
+```
+
+
+```{r}
+ggplot(data = flights,
+       aes(x = hour,
+           y = dep_time)) +
+  (geom_boxplot(aes(group = hour),color = "red")) 
+  
+  coord_cartesian(
+  xlim = 50,
+  ylim = 50,
+  expand = TRUE,
+  default = TRUE)
+
+```
+
+
 8.  Create your own question and answer it by using a graph. You may use any of the datasets loaded in the `nycflights13` package.
 
--   Indicate what your question is. Consider a question that could be answered best by utilizing facets, multiple geometries, multiple aesthetics, or some combination of those.
+Indicate what your question is. Consider a question that could be answered best by utilizing facets, multiple geometries, multiple aesthetics, or some combination of those.
 -   Create a graph that assists in answering the question.
 -   Write a short interpretation of the graph in order to answer your question.
 
+
+```{r}
+ggplot(data = planes, 
+       aes(x = speed, 
+           y = engine)) +
+geom_point(aes(color = type)) + facet_grid(type~.)
+```
+#I wanted to see which engine types had the fastest speeds. I created a grid with points to show each engine type and the speeds that each engine goes
+
+
+
+
 9.  You have now built a variety of graphics using the `ggplot2` system. Describe some of the advantages to the "grammar of graphics" approach to creating graphs.
+
+
+I can create graphs in a cleaner simpler fashion. When using excel I have to go through data,
+and make numerous changes before I can work with it. Once the data is workable I also have to go through multiple steps to create a graph. Using ggplot I can create the graphs using less steps.
+You can save plots as objects, so you can repeat many objects without having to use many lines of code. You can easily make changes to your plots by making minor changes to the code.
